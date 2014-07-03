@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csd:careServicesFunction 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:csd="urn:ihe:iti:csd:2013"
+  xsi:schemaLocation="urn:ihe:iti:csd:2013 CSD.xsd" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:ev="http://www.w3.org/2001/xml-events" 
+  xmlns:xforms="http://www.w3.org/2002/xforms"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
+  xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+  uuid="6137d1ef-04d7-450b-91f5-a8c6cf3774f3"
+  content-type="text">
+  <csd:description>
+    Gets metrics on specified data fields to determine applicability of these fields for deduplication of records.  Output is text representation of result.
+  </csd:description>
+  <csd:definition ><![CDATA[
+import module namespace rscript = "https://github.com/openhie/openinfoman/adapter/r";
+declare namespace csd = "urn:ihe:iti:csd:2013";
+
+declare variable $careServicesRequest as item() external;
+rscript:echo_result(/.,$careServicesRequest)
+
+]]></csd:definition>
+  <xforms:instance>
+    <csd:careServicesRequest/>
+  </xforms:instance>
+
+  <csd:extension type='r' urn='urn:openhie.org:openinfoman:adapter'/>
+  <csd:extension type='definition' urn='urn:openhie.org:openinfoman:adapter:r'><xi:include parse='text' href='matching_records_pre_analysis.R'/></csd:extension>
+  <csd:extension type='entities'  urn='urn:openhie.org:openinfoman:adapter:csv'>/csd:CSD/csd:providerDirectory/csd:provider</csd:extension>
+  <csd:extension type='search'  urn='urn:openhie.org:openinfoman:adapter:csv'>4e8bbeb9-f5f5-11e2-b778-0800200c9a66</csd:extension>
+    <!-- expects that search should return CSD document  -->
+  <csd:extension type='xpaths' urn='urn:openhie.org:openinfoman:adapter:csv'>
+    <xpath name='first_common_name'>csd:demographic/csd:name[1]/csd:commonName[1]</xpath>
+    <xpath name='forname'>csd:demographic/csd:name[1]/csd:forename[1]</xpath>
+    <xpath name='surname'>csd:demographic/csd:name[1]/csd:surname[1]</xpath>
+  </csd:extension>
+  <csd:extension type='description' urn='urn:openhie.org:openinfoman:adapter:r'>
+#
+# Adopted from Shaun Grannis by OpenInfoMan Team for OpenInfoMan and CSD
+# 
+# Orginal Authorhsip Follows:
+#  file: field_metrics.R
+#  author and copyright 2012: Shaun Grannis - 
+#  last update: 1/22/2014
+#
+# Purpose: This R function calculates various informational
+#   characteristics for each field in an R data frame. The
+#   summary helps to assess the amount and distribution of
+#   information contained in each field. This assessment
+#   helps inform the selection of fields for record linkage
+#
+# Pre-requisites: This function requires the "entropy"
+#   library. This can be loaded by invoking the R command
+#   install.packages("entropy"). It also assumes the data
+#   file to be loaded is *pipe*-delimited. (not comma)
+#
+# Output: A table with the following measures for each
+#   field in the data frame:
+#
+#   1.  Field name ("Col")
+#   2.  Shannon's entropy ("H")
+#   3.  Maximum possible entropy ("Hmax")
+#   4.  Percent of possible maximum entropy ("Hmax%")
+#   5.  Total unique values ("UqVal")
+#   6.  Average frequency for each value ("Favg")
+#   7.  Number of nulls ("N")
+#   8.  Number of nulls as a percent of total ("N%")
+#   9.  Closed-form u-value ("Uval")
+#   10. Blocking efficiency - # of pairs formed if field 
+#       as the only blocking variable ("pairs")
+#   11. log(base10) of value from 10. ("log(pairs)")
+#
+# Usage:  (one time only) Install the entropy package from
+#         R repository. This is done only once for a given
+#         machine
+  </csd:extension>
+
+</csd:careServicesFunction>
