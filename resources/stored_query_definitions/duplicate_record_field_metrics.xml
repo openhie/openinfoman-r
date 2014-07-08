@@ -10,7 +10,7 @@
   xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
   xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
   uuid="6137d1ef-04d7-450b-91f5-a8c6cf3774f3"
-  content-type="text">
+  content-type="text/html">
   <csd:description>
     Gets metrics on specified data fields to determine applicability of these fields for deduplication of records.  Output is text representation of result.
   </csd:description>
@@ -19,7 +19,7 @@ import module namespace rscript = "https://github.com/openhie/openinfoman/adapte
 declare namespace csd = "urn:ihe:iti:csd:2013";
 
 declare variable $careServicesRequest as item() external;
-rscript:echo_result(/.,$careServicesRequest)
+rscript:html_table_result(/.,$careServicesRequest)
 
 ]]></csd:definition>
   <xforms:instance>
@@ -28,7 +28,7 @@ rscript:echo_result(/.,$careServicesRequest)
 
   <csd:extension type='r' urn='urn:openhie.org:openinfoman:adapter'/>
   <csd:extension type='definition' urn='urn:openhie.org:openinfoman:adapter:r'><xi:include parse='text' href='matching_records_pre_analysis.R'/></csd:extension>
-  <csd:extension type='entities'  urn='urn:openhie.org:openinfoman:adapter:csv'>/csd:CSD/csd:providerDirectory/csd:provider</csd:extension>
+  <csd:extension type='entities'  urn='urn:openhie.org:openinfoman:adapter:csv'>/csd:providerDirectory/csd:provider</csd:extension>
   <csd:extension type='search'  urn='urn:openhie.org:openinfoman:adapter:csv'>4e8bbeb9-f5f5-11e2-b778-0800200c9a66</csd:extension>
     <!-- expects that search should return CSD document  -->
   <csd:extension type='xpaths' urn='urn:openhie.org:openinfoman:adapter:csv'>

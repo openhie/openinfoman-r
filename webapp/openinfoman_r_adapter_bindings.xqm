@@ -4,6 +4,7 @@ import module namespace rscript = "https://github.com/openhie/openinfoman/adapte
 import module namespace csd_webconf =  "https://github.com/openhie/openinfoman/csd_webconf";
 import module namespace csd_dm = "https://github.com/openhie/openinfoman/csd_dm";
 import module namespace csr_proc = "https://github.com/openhie/openinfoman/csr_proc";
+import module namespace oi_csv = "https://github.com/openhie/openinfoman/adapter/csv";
 
 declare namespace html = "http://www.w3.org/1999/xhtml";
 
@@ -112,19 +113,27 @@ declare
 
 declare
   %rest:path("/CSD/adapter/r/{$analysis_name}/{$doc_name}/get_dataframe")
-  %output:method("xhtml")
   %rest:GET
-(:  %output:method("application/csv") :)
   function page:get_dataframe($analysis_name,$doc_name)
 { 
   let $df := rscript:get_dataframe($analysis_name,$doc_name) 
   return  
-    if ($df) 
-    then $df 
+    if ($df  = '1' )
+    then 
+      (
+      <rest:response>
+	<http:response status="200" >
+	  <http:header name="Content-Type" value="text/csv; charset=utf-8"/>
+	  <http:header name="Content-Disposition" value="inline; filename='dataframe.csv'"/>
+	</http:response>
+      </rest:response>
+      ,$df 
+      )
     else
        (
        <rest:response>
 	 <http:response status="200" >
+	    <http:header name="Content-Type" value="text/html; charset=utf-8"/>
 	 </http:response>
        </rest:response>
        ,
@@ -132,8 +141,52 @@ declare
 	  <div class='container'>
 	    No Data Frame has been cached
 	    <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}/{$doc_name}">Return</a>
+	    <p>
+	      Temp directory is: {file:temp-dir()}
+	    </p>
 	  </div>
-       return page:wrapper($contents)
+       return page:wrapper_light($contents)
+     )
+ 
+    
+  
+};
+
+
+
+
+declare
+  %rest:path("/CSD/adapter/r/{$analysis_name}/{$doc_name}/create_dataframe")
+  %output:method("xhtml")
+  %rest:GET
+(:  %output:method("application/csv") :)
+  function page:create_dataframe($analysis_name,$doc_name)
+{ 
+  let $requestParams :=   <csd:requestParams function="{$analysis_name}" resource="{$doc_name}"/>
+  let $csd_doc := csd_dm:open_document($csd_webconf:db,$doc_name) 
+  let $res := rscript:create_dataframe($csd_doc,$requestParams)
+  let $contents := 
+    if ($res) 
+    then  
+	  <div class='container'>
+	    Data Frame has been cached 
+	    <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}/{$doc_name}">Return</a>
+	    <p>{$res}</p>
+	  </div>
+    else
+	  <div class='container'>
+	    No Data Frame has been cached
+	    <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}/{$doc_name}">Return</a>
+	  </div>
+
+  return 
+       (
+       <rest:response>
+	 <http:response status="200" >
+	 </http:response>
+       </rest:response>
+       ,
+       page:wrapper($contents)
      )
  
     
@@ -152,6 +205,11 @@ let $contents :=
   <ul>
     <p>Analysis: 	    <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}">{$analysis_name}</a></p>
     <li>
+      <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}/{$doc_name}/create_dataframe">
+       Create Data Frame
+      </a>
+    </li>
+    <li>
       <a href="{$csd_webconf:baseurl}CSD/adapter/r/{$analysis_name}/{$doc_name}/get_dataframe">
        Get Data Frame
       </a>
@@ -161,23 +219,55 @@ let $contents :=
         Run R script
       </a>
     </li>
+    <li> 
+      {
+	let $requestParams:=
+	   <csd:requestParams function="{$analysis_name}" resource="{$doc_name}" base_url="{$csd_webconf:baseurl}"/>
+	let $csd_doc := csd_dm:open_document($csd_webconf:db,$doc_name) 
+
+	return <pre>{oi_csv:get_serialized($csd_doc,$requestParams)}</pre>
+      }
+    </li>
   </ul>
 </div>
 return page:wrapper($contents)
 };
 
 
+declare function page:wrapper_light($content) {
+ <html >
+  <head>
 
+    <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap.css" rel="stylesheet"/>
+    <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap-theme.css" rel="stylesheet"/>
+
+  </head>
+  <body>  
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{$csd_webconf:baseurl}CSD">OpenInfoMan</a>
+        </div>
+      </div>
+    </div>
+    <div class='container'> {$content}</div>
+  </body>
+ </html>
+
+};
 
 declare function page:wrapper($content) {
- <html>
+ <html >
   <head>
 
     <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap.css" rel="stylesheet"/>
     <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap-theme.css" rel="stylesheet"/>
     
-
-    <link rel="stylesheet" type="text/css" media="screen"   href="{$csd_webconf:baseurl}static/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css"/>
 
     <script src="https://code.jquery.com/jquery.js"/>
     <script src="{$csd_webconf:baseurl}static/bootstrap/js/bootstrap.min.js"/>

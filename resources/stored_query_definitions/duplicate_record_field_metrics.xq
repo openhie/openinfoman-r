@@ -11,4 +11,4 @@ declare variable $careServicesRequest as item() external;
 :) 
 
 
-rscript:echo_results(/.,$careServiesRequest)
+rscript:html_results(/.,$careServiesRequest)

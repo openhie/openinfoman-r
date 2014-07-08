@@ -42,16 +42,9 @@ library("entropy")
 
 # load data set to be analyzed from a delimited dataset read from stdin
 
-inDataFrame <- read.table(stdin(), sep="|", header=T)
+inDataFrame <- read.table(file('stdin'), sep=",", header=T)
 
-# evaluate the data in output dataframe
 
-outDataFrame <- field_metrics(inDataFrame)
-
-#Write dataframe to stdout in the csv format
-
-write.csv(outDataFrame,stdout(),sep="|", na="", quote=F, row.names=F, col.names=T)
-#==============================================================
 
 field_metrics <- function(df) {
 
@@ -93,15 +86,15 @@ field_metrics <- function(df) {
     ####################
 
     # Output total records to STDOUT
-    cat("Total Recs|", trecs[1], "\n", sep="")
+    #cat("Total Recs,", trecs[1], "\n", sep="")
 
     # Output header row to STDOUT
-    cat("Col|H|Hmax|Hmax%|UqVal|Favg|N|N%|Uval|pairs|log(pairs)\n",sep="")
+    cat("Col,H,Hmax,Hmax%,UqVal,Favg,N,N%,Uval,pairs,log(pairs)\n",sep="")
 
     for (j in 1:flds[1] ) {
 
         # Calculate Shannon's entropy (H)
-        ent01 <- entropy(table(factor(do.call(paste, c(df[c(j)], sep = "|")))),method="ML",unit="log2")
+        ent01 <- entropy(table(factor(do.call(paste, c(df[c(j)], sep = ",")))),method="ML",unit="log2")
 
         # Calculate Unique Values (UqVal)
         uqval <- length( unique(df[[j]]) )
@@ -128,34 +121,34 @@ field_metrics <- function(df) {
         ############################
 
         # Output Column Name
-        cat( names(df[j]), "|", sep="")
+        cat( names(df[j]), ",", sep="")
 
         # Output Shannon's entropy (H)
-        cat( ent01[1], "|" , sep="")
+        cat( ent01[1], "," , sep="")
 
         # Output maximum entropy (Hmax)
-        cat(mxent[1], "|", sep="")
+        cat(mxent[1], ",", sep="")
 
         # Output maximum entropy percent (Hmax%)
-        cat(ent01[1] / mxent[1], "|", sep="")
+        cat(ent01[1] / mxent[1], ",", sep="")
 
         # Output Unique Values (UqVal)
-        cat( uqval[1], "|", sep="")
+        cat( uqval[1], ",", sep="")
 
         # Output Average Frequency (Favg)
-        cat( favg01[1], "|", sep="")
+        cat( favg01[1], ",", sep="")
 
         # Output NULLs (N)
-        cat( null01[1], "|", sep="" )
+        cat( null01[1], ",", sep="" )
 
         # Output NULL percent (N%)
-        cat( null01[1] / trecs[1], "|", sep="" )
+        cat( null01[1] / trecs[1], ",", sep="" )
 
         # Output closed-form U-value (Uval)
-        cat( uval01[1], "|", sep="")
+        cat( uval01[1], ",", sep="")
 
         # Output pairs formed if used as single blocking variable
-        cat(prs01[1], "|", sep="")
+        cat(prs01[1], ",", sep="")
 
         # Output LOG(pairs formed) if used as single blocking variable
         cat(log(prs01[1])/log(10), "\n", sep="")
@@ -201,3 +194,7 @@ field_metrics <- function(df) {
 
 }
 
+
+# evaluate the data in output dataframe
+
+outDataFrame <- field_metrics(inDataFrame)
