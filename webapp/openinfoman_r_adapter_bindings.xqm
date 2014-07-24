@@ -53,7 +53,7 @@ declare
 	<a href="{$csd_webconf:baseurl}CSD/adapter/r">R Adapters</a>
         {$analyses}
       </div>
-   return page:wrapper($contents)
+   return csd_webconf:wrapper($contents)
   else
   let $function := csr_proc:get_function_definition($csd_webconf:db,$analysis_name)
   let $contents := 
@@ -69,7 +69,7 @@ declare
      </pre>
    </p>
   </div>
-  return  page:wrapper($contents)
+  return  csd_webconf:wrapper($contents)
 };
 
 
@@ -104,7 +104,7 @@ declare
       <input type='submit' value='Run Script'/>
     </form>
   </div>
-  return page:wrapper($contents)
+  return csd_webconf:wrapper($contents)
    
 };
 
@@ -186,7 +186,7 @@ declare
 	 </http:response>
        </rest:response>
        ,
-       page:wrapper($contents)
+       csd_webconf:wrapper($contents)
      )
  
     
@@ -230,7 +230,7 @@ let $contents :=
     </li>
   </ul>
 </div>
-return page:wrapper($contents)
+return csd_webconf:wrapper($contents)
 };
 
 
@@ -259,35 +259,6 @@ declare function page:wrapper_light($content) {
   </body>
  </html>
 
-};
-
-declare function page:wrapper($content) {
- <html >
-  <head>
-
-    <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap.css" rel="stylesheet"/>
-    <link href="{$csd_webconf:baseurl}static/bootstrap/css/bootstrap-theme.css" rel="stylesheet"/>
-    
-
-    <script src="https://code.jquery.com/jquery.js"/>
-    <script src="{$csd_webconf:baseurl}static/bootstrap/js/bootstrap.min.js"/>
-  </head>
-  <body>  
-    <div class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{$csd_webconf:baseurl}CSD">OpenInfoMan</a>
-        </div>
-      </div>
-    </div>
-    <div class='container'> {$content}</div>
-  </body>
- </html>
 };
 
 
