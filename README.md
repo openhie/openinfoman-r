@@ -30,3 +30,8 @@ cd ~/basex/webapp/
 ln -s ~/openinfoman-r/webapp/openinfoman_r_adapter_bindings.xqm 
 </pre>
 
+Be sure to reload the stored functions: 
+> https://github.com/openhie/openinfoman/wiki/Install-Instructions#Loading_Stored_Queries
+
+
+
