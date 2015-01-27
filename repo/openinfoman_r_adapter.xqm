@@ -7,10 +7,14 @@
 module namespace rscript = "https://github.com/openhie/openinfoman/adapter/r";
 
 import module namespace oi_csv = "https://github.com/openhie/openinfoman/adapter/csv";
+(:
 import module namespace csv = "http://basex.org/modules/csv";
+:)
 import module namespace csr_proc = "https://github.com/openhie/openinfoman/csr_proc";
+(:
 import module namespace proc = "http://basex.org/modules/proc ";
 import module namespace file = "http://expath.org/ns/file";
+:)
 import module namespace csd_webconf =  "https://github.com/openhie/openinfoman/csd_webconf";
 
 declare namespace csd = "urn:ihe:iti:csd:2013";
