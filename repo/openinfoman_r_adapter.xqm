@@ -15,7 +15,6 @@ import module namespace csr_proc = "https://github.com/openhie/openinfoman/csr_p
 import module namespace proc = "http://basex.org/modules/proc ";
 import module namespace file = "http://expath.org/ns/file";
 :)
-import module namespace csd_webconf =  "https://github.com/openhie/openinfoman/csd_webconf";
 
 declare namespace csd = "urn:ihe:iti:csd:2013";
 
@@ -26,7 +25,7 @@ declare variable $rscript:r_exec := concat(file:current-dir() ,"../repo/evalRscr
 
 
 declare function rscript:is_analysis_function($analysis_name) {
-  let $function := csr_proc:get_function_definition($csd_webconf:db,$analysis_name)
+  let $function := csr_proc:get_function_definition($analysis_name)
   let $adapter := $function//csd:extension[ @type='r' and @urn='urn:openhie.org:openinfoman:adapter']
   let $desc := $function//csd:extension[ @type='description' and @urn='urn:openhie.org:openinfoman:adapter:r']
   let $script := $function//csd:extension[ @type='definition' and @urn='urn:openhie.org:openinfoman:adapter:r']
@@ -138,7 +137,7 @@ declare function rscript:create_dataframe($csd_doc,$requestParams)
 };
 
 declare function rscript:get_script($analysis_name) {
-    let $function := csr_proc:get_function_definition($csd_webconf:db,$analysis_name)
+    let $function := csr_proc:get_function_definition($analysis_name)
     let $src := string($function//csd:extension[ @type='definition' and @urn='urn:openhie.org:openinfoman:adapter:r'])
     return $src
 };

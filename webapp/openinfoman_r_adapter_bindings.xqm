@@ -39,7 +39,7 @@ declare
     let $analyses := 
       <ul>
         {
-  	  for $doc_name in csd_dm:registered_documents($csd_webconf:db)      
+  	  for $doc_name in csd_dm:registered_documents()      
 	  return
   	  <li>
 	  
@@ -55,7 +55,7 @@ declare
       </div>
    return csd_webconf:wrapper($contents)
   else
-  let $function := csr_proc:get_function_definition($csd_webconf:db,$analysis_name)
+  let $function := csr_proc:get_function_definition($analysis_name)
   let $contents := 
   <div class='container'>
    <p>
@@ -83,8 +83,8 @@ declare
 {
   let $requestParams := 
     <csd:requestParams function="{$analysis_name}" resource="{$doc_name}" base_url="{$csd_webconf:baseurl}"/> 	  	  
-  let $doc := csd_dm:open_document($csd_webconf:db,$doc_name)
-  let $contents := csr_proc:process_CSR_stored_results($csd_webconf:db, $doc,$requestParams)
+  let $doc := csd_dm:open_document($doc_name)
+  let $contents := csr_proc:process_CSR_stored_results( $doc,$requestParams)
   return $contents
 };
 
@@ -161,7 +161,7 @@ declare
   function page:create_dataframe($analysis_name,$doc_name)
 { 
   let $requestParams :=   <csd:requestParams function="{$analysis_name}" resource="{$doc_name}"/>
-  let $csd_doc := csd_dm:open_document($csd_webconf:db,$doc_name) 
+  let $csd_doc := csd_dm:open_document($doc_name) 
   let $res := rscript:create_dataframe($csd_doc,$requestParams)
   let $contents := 
     if ($res) 
@@ -221,7 +221,7 @@ let $contents :=
       {
 	let $requestParams:=
 	   <csd:requestParams function="{$analysis_name}" resource="{$doc_name}" base_url="{$csd_webconf:baseurl}"/>
-	let $csd_doc := csd_dm:open_document($csd_webconf:db,$doc_name) 
+	let $csd_doc := csd_dm:open_document($doc_name) 
 
 	return <pre>{oi_csv:get_serialized($csd_doc,$requestParams)}</pre>
       }

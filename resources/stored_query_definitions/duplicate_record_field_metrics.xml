@@ -9,19 +9,12 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
   xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
-  uuid="6137d1ef-04d7-450b-91f5-a8c6cf3774f3"
+  urn="urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics"
   content-type="text/html">
   <csd:description>
     Gets metrics on specified data fields to determine applicability of these fields for deduplication of records.  Output is text representation of result.
   </csd:description>
-  <csd:definition ><![CDATA[
-import module namespace rscript = "https://github.com/openhie/openinfoman/adapter/r";
-declare namespace csd = "urn:ihe:iti:csd:2013";
-
-declare variable $careServicesRequest as item() external;
-rscript:html_table_result(/.,$careServicesRequest)
-
-]]></csd:definition>
+  <csd:definition ><xi:include parse="text" href="duplicate_record_field_metrics.xq"/></csd:definition>
   <xforms:instance>
     <csd:careServicesRequest/>
   </xforms:instance>
