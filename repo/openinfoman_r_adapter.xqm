@@ -124,7 +124,7 @@ declare function rscript:get_dataframe($analysis_name,$doc_name) {
 
 declare function rscript:create_dataframe($csd_doc,$requestParams)
  {
-  let $analysis_name := string($requestParams/@function)
+  let $analysis_name := string($requestParams/@urn)
   let $doc_name := string($requestParams/@resource)
   let $df_dir := concat($rscript:df_dir , "/" , $analysis_name)
   let $df_src := concat($df_dir, "/" , $doc_name , ".dataframe")
@@ -147,7 +147,7 @@ declare function rscript:get_script($analysis_name) {
 
 declare function rscript:execute_script($requestParams) 
 {
-  let $analysis_name := string($requestParams/@function)
+  let $analysis_name := string($requestParams/@urn)
   let $doc_name := string($requestParams/@resource)
   let $script := rscript:get_script($analysis_name)
   let $df_src := concat($rscript:df_dir,"/",$analysis_name , "/" , $doc_name , ".dataframe")
