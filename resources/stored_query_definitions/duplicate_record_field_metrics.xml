@@ -1,35 +1,86 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<csd:careServicesFunction 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xmlns:csd="urn:ihe:iti:csd:2013"
-  xsi:schemaLocation="urn:ihe:iti:csd:2013 CSD.xsd" 
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:ev="http://www.w3.org/2001/xml-events" 
-  xmlns:xforms="http://www.w3.org/2002/xforms"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty"
-  xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
-  urn="urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics"
-  content-type="text/html">
+<csd:careServicesFunction xmlns:csd="urn:ihe:iti:csd:2013" xmlns:os="http://a9.com/-/spec/opensearch/1.1/" xmlns:hfp="http://www.w3.org/2001/XMLSchema-hasFacetAndProperty" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:ihe:iti:csd:2013 CSD.xsd" urn="urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics" content-type="text/html">
   <csd:description>
     Gets metrics on specified data fields to determine applicability of these fields for deduplication of records.  Output is text representation of result.
   </csd:description>
-  <csd:definition ><xi:include parse="text" href="duplicate_record_field_metrics.xq"/></csd:definition>
-  <xforms:instance>
-    <csd:careServicesRequest/>
-  </xforms:instance>
+  <csd:definition>
+    <xi:include parse="text" href="duplicate_record_field_metrics.xq"/>
+  </csd:definition>
+  <xforms:model id="urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics">
+    <xforms:instance id="care-services-result">
+      <csd:careSerivcesResponse id="" code="" content-type=""/>
+    </xforms:instance>
+    <xforms:instance id="http-post-request">
+      <csd:requestParams/>
+    </xforms:instance>
+    <xforms:instance id="http-post-response">
+      <http:result xmlns:http="http://expath.org/ns/http-client" status="">
+        <http:header name="X-CSD-Transaction-ID" value=""/>
+        <http:body/>
+      </http:result>
+    </xforms:instance>
+    <xforms:instance id="soap-request">
+      <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+        <soap:Header>
+          <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">urn:ihe:iti:csd:2013:GetCareServicesRequest</wsa:Action>
+          <wsa:MessageID xmlns:wsa="http://www.w3.org/2005/08/addressing"/>
+          <wsa:ReplyTo xmlns:wsa="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">
+            <wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>
+          </wsa:ReplyTo>
+          <wsa:To xmlns:wsa="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">{$LOCATION}</wsa:To>
+        </soap:Header>
+        <soap:Body>
+          <csd:careServicesRequest urn="urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics">
+            <csd:requestParams/>
+          </csd:careServicesRequest>
+        </soap:Body>
+      </soap:Envelope>
+    </xforms:instance>
+    <xforms:instance id="soap-response">
+      <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+        <soap:Header>
+          <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">urn:ihe:iti:csd:2013:GetCareServicesResponse</wsa:Action>
+          <wsa:MessageID xmlns:wsa="http://www.w3.org/2005/08/addressing"/>
+          <wsa:ReplyTo xmlns:wsa="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">
+            <wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>
+          </wsa:ReplyTo>
+          <wsa:RelatesTo xmlns:wsa="http://www.w3.org/2005/08/addressing"/>
+        </soap:Header>
+        <soap:Body>
+          <csd:careServicesResponse/>
+        </soap:Body>
+      </soap:Envelope>
+    </xforms:instance>
+    <xforms:submission id="soap-submission" method="post" mediatype="application/soap+xml" ref="instance('soap-request')" resource="{$LOCATION}"/>
+    <xforms:submission id="http-post-submission" method="post" mediatype="text/xml" ref="instance('http-post-request')" resource="{$LOCATION}/urn:openhie.org:openinfoman-r:stored-function:duplicate_record_field_metrics"/>
+    <xforms:action ev:event="xforms-submit-done" id="http-post-prepare">
+      <xforms:insert context="instance('http-post-response')/http:result/http:body" origin="instance('care-services-result')/csd:careServicesResponse/csd:result/*"/>
+      <xforms:setValue bind="instance('http-post-response')/http:result/@status" value="instance('care-services-result')/csd:careServicesResponse/@code"/>
+      <xforms:setValue bind="instance('http-post-response')/http:body/@content-type" value="instance('care-services-result')/csd:careServicesResponse/@content-type"/>
+      <xforms:setValue bind="instance('http-post-response')/http:result/http:header[@name='X-CSD-Transaction-ID']/@value" value="instance('care-services-result')/csd:careServicesResponse/@id"/>
+    </xforms:action>
+    <xforms:action ev:event="xforms-submit-done" id="soap-prepare">
+      <xforms:insert context="instance('soap-response')/soap:Envelope/soap:Body/csd:careServicesResponse/csd:result" origin="instance('care-services-result')/csd:careServicesRepsonse/csd:result/*"/>
+      <xforms:insert context="instance('soap-response')/soap:Envelope/soap:Body/csd:careServicesResponse/@content-type" origin="instance('care-services-result')/csd:careServicesRepsonse/@content-type"/>
+      <xforms:insert context="instance('soap-response')/soap:Envelope/soap:Body/csd:careServicesResponse/@code" origin="instance('care-services-result')/csd:careServicesRepsonse/@code"/>
+      <xforms:setValue bind="instance('soap-response')/soap:Envelope/soap:Header/wsa:messageID" value="instance('soap-request')/csd:careServicesRequest/@id"/>
+      <xforms:setValue bind="instance('soap-response')/soap:Envelope/soap:Header/wsa:relatesTo" value="instance('soap-request')/soap:Envelope/soap:Header/wsa:messageID"/>
+    </xforms:action>
+  </xforms:model>
+  
 
-  <csd:extension type='r' urn='urn:openhie.org:openinfoman:adapter'/>
-  <csd:extension type='definition' urn='urn:openhie.org:openinfoman:adapter:r'><xi:include parse='text' href='matching_records_pre_analysis.R'/></csd:extension>
-  <csd:extension type='entities'  urn='urn:openhie.org:openinfoman:adapter:csv'>/csd:providerDirectory/csd:provider</csd:extension>
-  <csd:extension type='search'  urn='urn:openhie.org:openinfoman:adapter:csv'>4e8bbeb9-f5f5-11e2-b778-0800200c9a66</csd:extension>
-    <!-- expects that search should return CSD document  -->
-  <csd:extension type='xpaths' urn='urn:openhie.org:openinfoman:adapter:csv'>
-    <xpath name='first_common_name'>csd:demographic/csd:name[1]/csd:commonName[1]</xpath>
-    <xpath name='forname'>csd:demographic/csd:name[1]/csd:forename[1]</xpath>
-    <xpath name='surname'>csd:demographic/csd:name[1]/csd:surname[1]</xpath>
+  <csd:extension type="r" urn="urn:openhie.org:openinfoman:adapter"/>
+  <csd:extension type="definition" urn="urn:openhie.org:openinfoman:adapter:r">
+    <xi:include parse="text" href="matching_records_pre_analysis.R"/>
   </csd:extension>
-  <csd:extension type='description' urn='urn:openhie.org:openinfoman:adapter:r'>
+  <csd:extension type="entities" urn="urn:openhie.org:openinfoman:adapter:csv">/csd:providerDirectory/csd:provider</csd:extension>
+  <csd:extension type="search" urn="urn:openhie.org:openinfoman:adapter:csv">4e8bbeb9-f5f5-11e2-b778-0800200c9a66</csd:extension>
+    <!-- expects that search should return CSD document  -->
+  <csd:extension type="xpaths" urn="urn:openhie.org:openinfoman:adapter:csv">
+    <xpath name="first_common_name">csd:demographic/csd:name[1]/csd:commonName[1]</xpath>
+    <xpath name="forname">csd:demographic/csd:name[1]/csd:forename[1]</xpath>
+    <xpath name="surname">csd:demographic/csd:name[1]/csd:surname[1]</xpath>
+  </csd:extension>
+  <csd:extension type="description" urn="urn:openhie.org:openinfoman:adapter:r">
 #
 # Adopted from Shaun Grannis by OpenInfoMan Team for OpenInfoMan and CSD
 # 
